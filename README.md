@@ -64,6 +64,8 @@ This optimized processing and presentation of time series data allows LLMs to qu
 
 ## Installation
 
+### Using uv
+
 First, install **uv** if you haven't already:
 
 ```bash
@@ -94,9 +96,28 @@ Or with the FRED API key and SSE transport:
 FRED_API_KEY=YOUR_API_KEY uvx finance-tools-mcp --transport sse
 ```
 
+### Using Docker
+
+You can also run **finance-tools-mcp** using Docker:
+
+```bash
+# イメージのビルド
+docker build -t finance-tools-mcp .
+
+# 実行（stdio モード）
+docker run -i --rm finance-tools-mcp --transport stdio
+
+# FRED API キーを設定して実行
+docker run -i --rm -e FRED_API_KEY=YOUR_API_KEY finance-tools-mcp --transport stdio
+```
+
+詳細な Docker の使用方法については、[DOCKER.md](DOCKER.md) を参照してください。
+
 ## Usage with MCP Clients
 
 To integrate **finance-tools-mcp** with an MCP client (for example, Claude Desktop), add the following configuration to your `claude_desktop_config.json`:
+
+### Using uv/uvx
 
 ```json
 {
@@ -104,6 +125,34 @@ To integrate **finance-tools-mcp** with an MCP client (for example, Claude Deskt
     "investor": {
         "command": "path/to/uvx/command/uvx",
         "args": ["finance-tools-mcp"],
+    }
+  }
+}
+```
+
+### Using Docker
+
+Docker を使用している場合は、以下のように設定します：
+
+```json
+{
+  "mcpServers": {
+    "investor": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "finance-tools-mcp", "--transport", "stdio"]
+    }
+  }
+}
+```
+
+FRED API キーを設定する場合：
+
+```json
+{
+  "mcpServers": {
+    "investor": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "-e", "FRED_API_KEY=your_api_key", "finance-tools-mcp", "--transport", "stdio"]
     }
   }
 }
